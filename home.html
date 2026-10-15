@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>New tab</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<style>
+body{margin:0;background:#f5f6fa;color:#14173b;font:16px/1.55 system-ui,"Segoe UI","Noto Sans Devanagari",sans-serif}
+main{max-width:680px;margin:0 auto;padding:22vh 20px 0}
+.brand{display:flex;align-items:center;gap:16px}
+b{font:600 3.4rem/1 Georgia,"Palatino Linotype",serif;letter-spacing:-.01em}
+i{font-style:normal;color:#5a5f80}
+svg{width:72px;height:72px}
+form{display:flex;gap:8px;margin-top:28px}
+input{flex:1;font:inherit;padding:12px 14px;border:1.5px solid #14173b;border-radius:6px;background:#fff;color:#14173b}
+button{font:inherit;font-weight:600;padding:0 20px;border:0;border-radius:6px;background:#14173b;color:#fff;cursor:pointer}
+button:hover{background:#2a3fbf}:focus-visible{outline:3px solid #2a3fbf;outline-offset:2px}
+.pupil{transition:transform .12s ease-out}@media (prefers-reduced-motion:reduce){.pupil{transition:none}}
+</style></head><body><main>
+<div class="brand"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="none" stroke="#14173b" stroke-width="2.5"/><circle cx="24" cy="24" r="13" fill="none" stroke="#2a3fbf" stroke-width="2.5"/><circle class="pupil" cx="24" cy="24" r="6" fill="#14173b"/></svg><b>Drishti</b><i>दृष्टि</i></div>
+<form id="f"><input id="q" placeholder="Search or enter address" aria-label="Search" autofocus><button>Search</button></form>
+</main><script>
+const S = new URLSearchParams(location.search).get('s'), q = document.getElementById('q');
+document.getElementById('f').onsubmit = (e) => {
+  e.preventDefault(); const v = q.value.trim(); if (!v) return;
+  location.href = /^https?:\/\//i.test(v) ? v : S + encodeURIComponent(v);
+};
+const p = document.querySelector('.pupil');
+if (!matchMedia('(prefers-reduced-motion:reduce)').matches) addEventListener('pointermove', (e) => {
+  const r = p.ownerSVGElement.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1, k = Math.min(7, d / 40);
+  p.style.transform = 'translate(' + dx / d * k + 'px,' + dy / d * k + 'px)';
+});
+</script></body></html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<style>
+:root{--ink:#14173b;--accent:#2a3fbf;--strip:#e9ecf5;--line:#cdd2e6}
+*{box-sizing:border-box}
+body{margin:0;height:84px;overflow:hidden;background:var(--strip);color:var(--ink);font:13px system-ui,-apple-system,"Segoe UI",sans-serif;user-select:none}
+#tabs{display:flex;align-items:flex-end;gap:2px;height:38px;padding:6px 8px 0}
+.tab{display:flex;align-items:center;gap:6px;width:200px;max-width:240px;min-width:60px;height:32px;padding:0 6px 0 12px;border-radius:8px 8px 0 0;background:transparent;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.tab:hover{background:#dde1f0}
+.tab[aria-selected=true]{background:#fff}
+.tab span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tab.loading span::before{content:"";display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:var(--accent)}
+.x,.plus,.nav{border:0;background:transparent;color:inherit;border-radius:6px;cursor:pointer;font:inherit}
+.x{width:20px;height:20px}.x:hover,.nav:hover:not(:disabled),.plus:hover{background:#cfd4ea}
+.plus{width:28px;height:28px;margin-bottom:2px;font-size:18px}
+#bar{display:flex;align-items:center;gap:4px;height:46px;padding:0 10px;background:#fff;border-bottom:1px solid var(--line)}
+.nav{width:32px;height:32px;font-size:16px}.nav:disabled{opacity:.35;cursor:default}
+#url{flex:1;height:32px;padding:0 14px;border:1.5px solid var(--line);border-radius:16px;font:inherit;font-size:14px;background:var(--strip);color:var(--ink);user-select:text}
+#url:focus{outline:none;border-color:var(--accent);background:#fff}
+button:focus-visible{outline:2px solid var(--accent)}
+</style></head><body>
+<div id="tabs" role="tablist"></div>
+<div id="bar">
+  <button class="nav" id="back" title="Back" aria-label="Back">←</button>
+  <button class="nav" id="fwd" title="Forward" aria-label="Forward">→</button>
+  <button class="nav" id="reload" title="Reload" aria-label="Reload">⟳</button>
+  <input id="url" type="text" spellcheck="false" placeholder="Search or enter address" aria-label="Address">
+</div>
+<script>
+const $ = (id) => document.getElementById(id), url = $('url');
+$('back').onclick = () => drishti.cmd('back');
+$('fwd').onclick = () => drishti.cmd('forward');
+$('reload').onclick = () => drishti.cmd('reload');
+url.onkeydown = (e) => { if (e.key === 'Enter') { drishti.cmd('go', url.value); url.blur(); } };
+url.onfocus = () => url.select();
+drishti.onFocusUrl(() => url.focus());
+drishti.onTabs((tabs, active) => {
+  const el = $('tabs'); el.textContent = '';
+  for (const t of tabs) {
+    const b = document.createElement('div');
+    b.className = 'tab' + (t.loading ? ' loading' : ''); b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', t.id === active); b.tabIndex = 0;
+    const s = document.createElement('span'); s.textContent = t.title; b.append(s);
+    const x = document.createElement('button'); x.className = 'x'; x.textContent = '×'; x.setAttribute('aria-label', 'Close tab');
+    x.onclick = (e) => { e.stopPropagation(); drishti.cmd('close', t.id); };
+    b.append(x); b.onclick = () => drishti.cmd('select', t.id);
+    el.append(b);
+  }
+  const p = document.createElement('button'); p.className = 'plus'; p.textContent = '+'; p.setAttribute('aria-label', 'New tab');
+  p.onclick = () => drishti.cmd('new'); el.append(p);
+  const a = tabs.find((t) => t.id === active); if (!a) return;
+  $('back').disabled = !a.back; $('fwd').disabled = !a.forward;
+  $('reload').textContent = a.loading ? '✕' : '⟳';
+  if (document.activeElement !== url) url.value = a.url;
+});
+</script></body></html>
