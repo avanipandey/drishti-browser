@@ -1,0 +1,9 @@
+{
+  "name": "drishti-browser",
+  "version": "1.0.0",
+  "description": "Drishti (दृष्टि): a minimal tabbed web browser built on Electron",
+  "main": "main.js",
+  "scripts": { "start": "electron ." },
+  "devDependencies": { "electron": "^33.0.0" },
+  "license": "MIT"
+}
